@@ -117,7 +117,7 @@ function weeklyConf(command, message) {
   }
   if (command.length === 1) {
     message.channel.send(
-      '```\n日: ' + week.sunday + '\n月: ' + week.monday + '\n火: ' + week.tuesday + '\n水: ' + week.wednesday + '\n木: ' + week.thursday + '\n金: ' + week.friday + '\n土: ' + week.saturday + '\n```'
+      '```\n日: ' + week[0] + '\n月: ' + week[1] + '\n火: ' + week[2] + '\n水: ' + week[3] + '\n木: ' + week[4] + '\n金: ' + week[5] + '\n土: ' + week[6] + '\n```'
     ).then(msg => console.log(`Sent: #${message.channel.name} ${msg}`))
       .catch(console.error);
     return;

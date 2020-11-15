@@ -17,31 +17,19 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     # depends_on:
     #   - mariadb
-    #   - mongodb
     command: "npm start"
   # mariadb:
   #   image: mariadb
-  #   volumes: 
+  #   volumes:
   #     - mariadb_data:/var/lib/mysql
   #   restart: always
-  #   environment: 
+  #   environment:
   #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
   #     MYSQL_DATABASE: schedulebot
   #     MYSQL_USER: ${MYSQL_USER}
   #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-  # mongodb:
-  #   image: mongo
-  #   restart: always
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-  #     MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-  #   volumes:
-  #     - mongodb_data:/data/db
-  #     - ./configdb:/data/configdb
 
 
 volumes:
   mariadb_data:
-    driver: local
-  mongodb_data:
     driver: local
