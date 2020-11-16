@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
-const mariadb = require('mariadb');
 const schedule = require('node-schedule');
 const dayjs = require('dayjs');
-const isSameOrAfter = require('dayjs/plugin/isSameOrAfter')
+const isSameOrAfter = require('dayjs/plugin/isSameOrAfter');
+const Server = require('./models/Server');
 dayjs.extend(isSameOrAfter)
 
 const discordToken = process.env.DISCORD_TOKEN;
@@ -21,26 +21,21 @@ let week = [
   '',
 ];
 
+const weekStr = ['日', '月', '火', '水', '木', '金', '土'];
+
 let remaind = {
   channel: '',
   mention: '',
   advance: 0,
 };
 
-const dbPool = mariadb.createPool({
-  host: process.env.MARIADB_HOST,
-  user: process.env.MARIADB_USER,
-  password: process.env.MARIADB_PASSWORD,
-  connectionLimit: process.env.MARIADB_CONNECTION_LIMIT
-});
-
 // const mongoClient = new mongodb.MongoClient(process.env.MONGO_HOST, 27017);
 
-discordClient.on("ready", () => {
-  console.log("ready......");
+discordClient.on('ready', () => {
+  console.log('ready......');
 });
 
-discordClient.on("message", message => {
+discordClient.on('message', message => {
   if (message.author.bot) {
     return;
   }
@@ -84,6 +79,27 @@ discordClient.on("message", message => {
 //     return;
 //   }
 // });
+
+discordClient.on('guildCreate', async (guild) => {
+  try {
+    const createServer = await Server.query().insert({
+      id: Number(guild.id),
+      name: guild.name
+    });
+    console.log(`JOIN: ${guild.name}(${createServer.id})`);
+  } catch (err) {
+    console.log(err);
+  };
+});
+
+discordClient.on('guildDelete', async (guild) => {
+  try {
+    const deleteServer = await Server.query().deleteById(guild.id);
+    console.log(`LEAVE: ${guild.name}(${guild.id}) deleted column: ${deleteServer}`);
+  } catch (err) {
+    console.log(err);
+  };
+})
 
 discordClient.login(discordToken);
 
@@ -193,7 +209,7 @@ function weekly(command, message) {
         startDate.setFullYear(startDate.getFullYear() + 1);
       }
       for (let i = 0; i < 7; i++) {
-        message.channel.send(`${startDate.getMonth() + 1}/${startDate.getDate()} - ${week[startDate.getDay()]}`)
+        message.channel.send(`${startDate.getMonth() + 1}/${startDate.getDate()} (${weekStr[startDate.getDay()]}) - ${week[startDate.getDay()]}`)
           .then(msg => {
             console.log(`Sent: #${message.channel.name} ${msg}`);
             msg.react('⭕').catch(console.error);
