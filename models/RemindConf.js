@@ -5,7 +5,7 @@ class RemindConf extends Model {
   static tableName = 'remindConf';
 
   static jsonSchema = {
-    required: ['serverId', 'advanceNotice', 'noticeChannelId'],
+    required: ['serverId', 'advanceNotice', 'noticeChannelId', 'noticeMention'],
     properties: {
       serverId: {
         type: 'number',
@@ -16,8 +16,13 @@ class RemindConf extends Model {
         minimum: 0,
       },
       noticeChannelId: {
-        type: 'integar',
-        minimum: 0,
+        type: 'text',
+      },
+      noticeChannelName: {
+        type: 'text',
+      },
+      noticeMention: {
+        type: 'text',
       },
     },
   };

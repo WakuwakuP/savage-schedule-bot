@@ -5,7 +5,9 @@ exports.up = function (knex) {
       table.increments('id').primary().unsigned();
       table.bigInteger('serverId').unsigned().unique();
       table.integer('advanceNotice').unsigned();
-      table.bigInteger('noticeChannelId').unsigned();
+      table.text('noticeChannelId');
+      table.text('noticeChannelName');
+      table.text('noticeMention');
       table.timestamp('created_at').defaultTo(knex.fn.now());
       table.timestamp('updated_at').nullable();
       table.foreign('serverId').references('id').inTable('server').onDelete('cascade');
