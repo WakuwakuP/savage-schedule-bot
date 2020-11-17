@@ -3,7 +3,7 @@ exports.up = function (knex) {
   return knex.schema
     .createTable('participant', function (table) {
       table.bigInteger('id').primary().unsigned();
-      table.integer('scheduleId').unsigned().unique();
+      table.bigInteger('scheduleId').unsigned().unique();
       table.integer('anser');
       table.timestamp('created_at').defaultTo(knex.fn.now());
       table.timestamp('updated_at').nullable();

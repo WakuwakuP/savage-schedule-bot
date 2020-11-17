@@ -6,14 +6,24 @@ class Schedule extends Model {
   static tableName = 'schedule';
 
   static jsonSchema = {
-    required: ['scheduleGroupId', 'date', 'time'],
+    required: ['id', 'scheduleGroupId', 'date', 'time'],
     properties: {
+      id: {
+        type: 'Number',
+        minimum: 0,
+      },
       scheduleGroupId: {
         type: 'integar',
         minimum: 0,
       },
-      date: { pattern: /(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])/ },
-      time: { pattern: /([01][0-9]|2[0-3]):[0-5][0-9]/ },
+      date: {
+        type: 'string',
+        pattern: '^[0-9]{4}/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$'
+      },
+      time: {
+        type: 'string',
+        pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'
+      },
     },
   };
 

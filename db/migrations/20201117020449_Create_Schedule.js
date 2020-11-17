@@ -2,7 +2,7 @@
 exports.up = function (knex) {
   return knex.schema
     .createTable('schedule', function (table) {
-      table.increments('id').primary().unsigned();
+      table.bigInteger('id').primary().unsigned();
       table.integer('scheduleGroupId').unsigned();
       table.date('date');
       table.time('time');

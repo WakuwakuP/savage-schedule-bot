@@ -12,7 +12,7 @@ class Participant extends Model {
         minimum: 0,
       },
       scheduleId: {
-        type: 'integar',
+        type: 'Number',
         minimum: 0,
       },
       anser: {

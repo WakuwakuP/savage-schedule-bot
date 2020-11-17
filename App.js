@@ -1,9 +1,6 @@
 const Discord = require('discord.js');
 const schedule = require('node-schedule');
-const dayjs = require('dayjs');
 const { transaction } = require('objection');
-const isSameOrAfter = require('dayjs/plugin/isSameOrAfter');
-dayjs.extend(isSameOrAfter)
 
 const Server = require('./models/Server');
 
@@ -13,18 +10,8 @@ const weekly = require('./lib/weekly');
 const weeklyConf = require('./lib/weeklyConf');
 
 const discordToken = process.env.DISCORD_TOKEN;
-const matchTime = new RegExp('([01][0-9]|2[0-3]):[0-5][0-9]');
-const matchDate = new RegExp('(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])');
 
 const discordClient = new Discord.Client();
-
-const weekStr = ['日', '月', '火', '水', '木', '金', '土'];
-
-let remaind = {
-  channel: '',
-  mention: '',
-  advance: 0,
-};
 
 // const mongoClient = new mongodb.MongoClient(process.env.MONGO_HOST, 27017);
 
