@@ -14,17 +14,10 @@ const discordToken = process.env.DISCORD_TOKEN;
 
 const discordClient = new Discord.Client({
   restTimeOffset: 100,
-  ws: { intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS'] }
+  ws: { intents: ['GUILDS', 'GUILD_PRESENCES', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS'] }
 });
 
-// const mongoClient = new mongodb.MongoClient(process.env.MONGO_HOST, 27017);
-
 discordClient.on('ready', async () => {
-  const servers = await Server.query();
-  servers.forEach(async server => {
-    const guild = await discordClient.guilds.fetch(server.id);
-    guild.members.fetch();
-  });
   console.log('ready......');
 });
 
