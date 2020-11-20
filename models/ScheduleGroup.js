@@ -1,6 +1,4 @@
 const { Model } = require('./Model');
-const Schedule = require('./Schedule');
-const Server = require('./Server');
 
 class ScheduleGroup extends Model {
   static tableName = 'scheduleGroup';
@@ -9,30 +7,34 @@ class ScheduleGroup extends Model {
     required: ['serverId'],
     properties: {
       serverId: {
-        type: 'number',
-        minimum: 0,
+        type: "string",
+        pattern: "^[0-9]+$"
       },
     }
   }
 
-  static relrationMappings = {
-    server: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: Server,
-      join: {
-        from: 'scheduleGroup.serverId',
-        to: 'server.id',
+  static get relationMappings() {
+    const Schedule = require('./Schedule');
+    const Server = require('./Server');
+    return {
+      server: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Server,
+        join: {
+          from: 'scheduleGroup.serverId',
+          to: 'server.id',
+        },
       },
-    },
-    schedules: {
-      relation: Model.HasManyRelation,
-      modelClass: Schedule,
-      join: {
-        from: 'shceduleGroup.id',
-        to: 'schedule.shceduleGroupId',
+      schedules: {
+        relation: Model.HasManyRelation,
+        modelClass: Schedule,
+        join: {
+          from: 'scheduleGroup.id',
+          to: 'schedule.shceduleGroupId',
+        },
       },
-    },
-  };
+    };
+  }
 }
 
 module.exports = ScheduleGroup;

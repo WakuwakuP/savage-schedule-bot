@@ -3,7 +3,7 @@ exports.up = function (knex) {
   return knex.schema
     .createTable('weeklyConf', function (table) {
       table.increments('id').primary().unsigned();
-      table.bigInteger('serverId').unsigned().unique();
+      table.string('serverId', 20).unique();
       table.time('sunday');
       table.time('monday');
       table.time('tuesday');

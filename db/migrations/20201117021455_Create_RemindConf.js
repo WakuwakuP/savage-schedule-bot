@@ -3,7 +3,7 @@ exports.up = function (knex) {
   return knex.schema
     .createTable('remindConf', function (table) {
       table.increments('id').primary().unsigned();
-      table.bigInteger('serverId').unsigned().unique();
+      table.string('serverId', 20).unique();
       table.integer('advanceNotice').unsigned();
       table.text('noticeChannelId');
       table.text('noticeChannelName');

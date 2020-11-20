@@ -1,5 +1,4 @@
 const { Model } = require('./Model');
-const Server = require('./Server.js');
 
 class RemindConf extends Model {
   static tableName = 'remindConf';
@@ -8,8 +7,8 @@ class RemindConf extends Model {
     required: ['serverId', 'advanceNotice', 'noticeChannelId', 'noticeMention'],
     properties: {
       serverId: {
-        type: 'number',
-        minimum: 0,
+        type: "string",
+        pattern: "^[0-9]+$"
       },
       advanceNotice: {
         type: 'number',
@@ -27,16 +26,19 @@ class RemindConf extends Model {
     },
   };
 
-  static relrationMappings = {
-    server: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: Server,
-      join: {
-        from: 'remindConf.serverId',
-        to: 'server.id',
+  static get relationMappings() {
+    const Server = require('./Server.js');
+    return {
+      server: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Server,
+        join: {
+          from: 'remindConf.serverId',
+          to: 'server.id',
+        },
       },
-    },
-  }
+    };
+  };
 }
 
 

@@ -2,8 +2,10 @@
 exports.up = function (knex) {
   return knex.schema
     .createTable('participant', function (table) {
-      table.bigInteger('id').primary().unsigned();
-      table.bigInteger('scheduleId').unsigned().unique();
+      table.increments('id').primary();
+      table.string('userId', 20);
+      table.string('scheduleId', 20);
+      table.text('userName');
       table.integer('anser');
       table.timestamp('created_at').defaultTo(knex.fn.now());
       table.timestamp('updated_at').nullable();

@@ -1,21 +1,30 @@
 const Discord = require('discord.js');
 const schedule = require('node-schedule');
-const { transaction } = require('objection');
 
 const Server = require('./models/Server');
+const Schedule = require('./models/Schedule');
 
 const commandError = require('./lib/commandError');
 const remindConf = require('./lib/remindConf');
+const { scheduleReactionAdd, scheduleReactionmessageEdit, ansers } = require('./lib/scheduleReaction');
 const weekly = require('./lib/weekly');
 const weeklyConf = require('./lib/weeklyConf');
 
 const discordToken = process.env.DISCORD_TOKEN;
 
-const discordClient = new Discord.Client();
+const discordClient = new Discord.Client({
+  restTimeOffset: 100,
+  ws: { intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS'] }
+});
 
 // const mongoClient = new mongodb.MongoClient(process.env.MONGO_HOST, 27017);
 
-discordClient.on('ready', () => {
+discordClient.on('ready', async () => {
+  const servers = await Server.query();
+  servers.forEach(async server => {
+    const guild = await discordClient.guilds.fetch(server.id);
+    guild.members.fetch();
+  });
   console.log('ready......');
 });
 
@@ -48,29 +57,65 @@ discordClient.on('message', message => {
   const msg = message.content;
   const channel = message.channel;
   channel.send(`debag: ${msg}`)
-    .then(msg => console.log(`Sent: #${message.channel.name} ${msg}`))
+    .then(msg => console.log(`Discord: Send (#${message.channel.name}) ${msg}`))
     .catch(console.error);
 });
 
-// discordClient.on("messageReactionAdd", messageReaction => {
-//   if (messageReaction.author.bot) {
-//     return;
-//   }
-// });
+discordClient.on('messageReactionAdd', async (messageReaction, user) => {
+  const anser = messageReaction.emoji.name;
+  if (user.bot || !ansers.includes(anser)) {
+    return;
+  }
+  await messageReaction.users.remove(user);
+  const message = messageReaction.message;
+  const scheduleId = message.id;
+  const userId = user.id;
+  const userName = user.username;
+  await scheduleReactionAdd(userId, scheduleId, userName, anser);
+  await scheduleReactionmessageEdit(message);
+});
 
-// discordClient.on("messageReactionRemove", messageReaction => {
-//   if (messageReaction.author.bot) {
-//     return;
-//   }
-// });
+discordClient.on('messageReactionRemove', async (messageReaction, user) => {
+  const anser = messageReaction.emoji.name;
+  const schedule = await Schedule.query().findOne({ id: messageReaction.message.id }).catch(() => undefined);
+  if (!user.bot || !ansers.includes(anser) || schedule == undefined) {
+    return;
+  }
+  console.log(`Discord: ReactDelete "${user.username}"`);
+  try {
+    await messageReaction.remove();
+    await messageReaction.message.react('⭕');
+    await messageReaction.message.react('❌');
+    await messageReaction.message.react('❓');
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+discordClient.on('messageReactionRemoveAll', async message => {
+  const schedule = await Schedule.query().findOne({ id: message.id }).catch(() => undefined);
+  if (schedule == undefined) {
+    return;
+  }
+  console.log(`Discord: ReactAllDelete ${message.id}`);
+  try {
+    await message.react('⭕');
+    await message.react('❌');
+    await message.react('❓');
+  } catch (err) {
+    console.log(err);
+  }
+
+});
+
 
 discordClient.on('guildCreate', async (guild) => {
   try {
     const createServer = await Server.query().insert({
-      id: Number(guild.id),
+      id: guild.id,
       name: guild.name
     });
-    console.log(`JOIN: ${guild.name}(${createServer.id})`);
+    console.log(`DB     : Insert Server ${createServer.id} ${guild.name}`);
   } catch (err) {
     console.log(err);
   };
@@ -79,7 +124,7 @@ discordClient.on('guildCreate', async (guild) => {
 discordClient.on('guildDelete', async (guild) => {
   try {
     const deleteServer = await Server.query().deleteById(guild.id);
-    console.log(`LEAVE: ${guild.name}(${guild.id}) deleted column: ${deleteServer}`);
+    console.log(`DB     : Deleted Server ${guild.id} ${guild.name}`);
   } catch (err) {
     console.log(err);
   };

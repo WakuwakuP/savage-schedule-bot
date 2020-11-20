@@ -1,19 +1,21 @@
 const { Model } = require('./Model');
-const Schedule = require('./Schedule');
 
 class Participant extends Model {
   static tableName = 'participant';
 
   static jsonSchema = {
-    required: ['id', 'scheduleId', 'anser'],
+    required: ['userId', 'scheduleId', 'userName', 'anser'],
     properties: {
-      id: {
-        type: 'number',
-        minimum: 0,
+      userId: {
+        type: "string",
+        pattern: "^[0-9]+$"
       },
       scheduleId: {
-        type: 'Number',
-        minimum: 0,
+        type: "string",
+        pattern: "^[0-9]+$"
+      },
+      userName: {
+        type: "string",
       },
       anser: {
         type: 'integar',
@@ -21,15 +23,18 @@ class Participant extends Model {
     },
   };
 
-  static relrationMappings = {
-    server: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: Schedule,
-      join: {
-        from: 'participant.scheduleId',
-        to: 'schedule.id',
+  static get relationMappings() {
+    const Schedule = require('./Schedule');
+    return {
+      schedule: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Schedule,
+        join: {
+          from: 'participant.scheduleId',
+          to: 'schedule.id',
+        },
       },
-    },
+    };
   };
 }
 

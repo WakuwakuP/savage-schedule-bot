@@ -1,20 +1,21 @@
 const { Model } = require('./Model');
-const Participant = require('./Participant');
-const ScheduleGroup = require('./ScheduleGroup');
 
 class Schedule extends Model {
   static tableName = 'schedule';
-
   static jsonSchema = {
-    required: ['id', 'scheduleGroupId', 'date', 'time'],
+    required: ['id', 'scheduleGroupId', 'channelId', 'date', 'time'],
     properties: {
       id: {
-        type: 'Number',
-        minimum: 0,
+        type: "string",
+        pattern: "^[0-9]+$"
       },
       scheduleGroupId: {
         type: 'integar',
         minimum: 0,
+      },
+      channelId: {
+        type: "string",
+        pattern: "^[0-9]+$"
       },
       date: {
         type: 'string',
@@ -27,23 +28,27 @@ class Schedule extends Model {
     },
   };
 
-  static relrationMappings = {
-    participants: {
-      relation: Model.HasManyRelation,
-      modelClass: Participant,
-      join: {
-        from: 'schedule.id',
-        to: 'participant.scheduleId',
-      }
-    },
-    server: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: ScheduleGroup,
-      join: {
-        from: 'schedule.scheduleGroupId',
-        to: 'schedule.id',
+  static get relationMappings() {
+    const Participant = require('./Participant');
+    const ScheduleGroup = require('./ScheduleGroup');
+    return {
+      participants: {
+        relation: Model.HasManyRelation,
+        modelClass: Participant,
+        join: {
+          from: 'schedule.id',
+          to: 'participant.scheduleId',
+        }
       },
-    },
+      scheduleGroups: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: ScheduleGroup,
+        join: {
+          from: 'schedule.scheduleGroupId',
+          to: 'scheduleGroup.id',
+        },
+      },
+    };
   };
 }
 

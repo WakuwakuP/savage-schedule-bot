@@ -2,8 +2,9 @@
 exports.up = function (knex) {
   return knex.schema
     .createTable('schedule', function (table) {
-      table.bigInteger('id').primary().unsigned();
+      table.string('id', 20).primary();
       table.integer('scheduleGroupId').unsigned();
+      table.string('channelId', 20);
       table.date('date');
       table.time('time');
       table.timestamp('created_at').defaultTo(knex.fn.now());
