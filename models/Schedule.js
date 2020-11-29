@@ -40,7 +40,7 @@ class Schedule extends Model {
           to: 'participant.scheduleId',
         }
       },
-      scheduleGroups: {
+      scheduleGroup: {
         relation: Model.BelongsToOneRelation,
         modelClass: ScheduleGroup,
         join: {

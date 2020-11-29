@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const schedule = require('node-schedule');
 
 const Server = require('./models/Server');
 const Schedule = require('./models/Schedule');
@@ -10,6 +9,8 @@ const { scheduleReactionAdd, scheduleReactionmessageEdit, ansers } = require('./
 const weekly = require('./lib/weekly');
 const weeklyConf = require('./lib/weeklyConf');
 
+const { readyCreateJob } = require('./lib/job');
+
 const discordToken = process.env.DISCORD_TOKEN;
 
 const discordClient = new Discord.Client({
@@ -18,6 +19,7 @@ const discordClient = new Discord.Client({
 });
 
 discordClient.on('ready', async () => {
+  readyCreateJob(discordClient);
   console.log('ready......');
 });
 
@@ -47,11 +49,11 @@ discordClient.on('message', message => {
     }
   }
 
-  const msg = message.content;
-  const channel = message.channel;
-  channel.send(`debag: ${msg}`)
-    .then(msg => console.log(`Discord: Send (#${message.channel.name}) ${msg}`))
-    .catch(console.error);
+  // const msg = message.content;
+  // const channel = message.channel;
+  // channel.send(`debag: ${msg}`)
+  //   .then(msg => console.log(`Discord: Send (#${message.channel.name}) ${msg}`))
+  //   .catch(console.error);
 });
 
 discordClient.on('messageReactionAdd', async (messageReaction, user) => {
