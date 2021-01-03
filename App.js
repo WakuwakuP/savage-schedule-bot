@@ -61,13 +61,15 @@ discordClient.on('messageReactionAdd', async (messageReaction, user) => {
   if (user.bot || !ansers.includes(anser)) {
     return;
   }
-  await messageReaction.users.remove(user);
   const message = messageReaction.message;
   const scheduleId = message.id;
   const userId = user.id;
   const userName = user.username;
-  await scheduleReactionAdd(userId, scheduleId, userName, anser);
-  await scheduleReactionmessageEdit(message);
+  if (message.author.bot) {
+    await messageReaction.users.remove(user);
+    await scheduleReactionAdd(userId, scheduleId, userName, anser);
+    await scheduleReactionmessageEdit(message);
+  }
 });
 
 discordClient.on('messageReactionRemove', async (messageReaction, user) => {
